@@ -2,13 +2,50 @@ function main(){
     var kanvas = document.getElementById("kanvas");
     var gl = kanvas.getContext("webgl");
 
+    var vertices = [
+        -0.7, 0.73,
+        -0.85, 0.73,
+        -0.9, 0.78,
+        -0.9, 0.9,
+        -0.85, 0.95,
+        -0.7, 0.95,
+        -0.65, 0.9,
+        -0.65, 0.6,
+        -0.7, 0.55,
+        -0.85, 0.55,
+        -0.9, 0.6,
+        -0.9, 0.65,
+        -0.85, 0.65,
+        -0.85, 0.62,
+        -0.83, 0.6,
+        -0.72, 0.6,
+        -0.7, 0.62,
+        -0.7, 0.73,
+
+        -0.83, 0.9,
+        -0.72, 0.9,
+        -0.7, 0.88,
+        -0.7, 0.8,
+        -0.72, 0.78,
+        -0.83, 0.78,
+        -0.85, 0.8,
+        -0.85, 0.88,
+        -0.83, 0.9
+    ];
+
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
     // Vertex shader
     var vertexShaderCode = `
+    attribute vec2 aPosition;
     void main() {
-        float x = 0.0;
-        float y = 0.0;
-        gl_PointSize = 70.0;
+        float x = aPosition.x;
+        float y = aPosition.y;
+        gl_PointSize = 10.0;
         gl_Position = vec4(x, y, 0.0, 1.0);
+        // x, y bisa diganti jadi aPosition.xy
     }`;
     var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShaderObject, vertexShaderCode);
@@ -25,6 +62,7 @@ function main(){
         
     }    
     `;
+    
     var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShaderObject, fragmentShaderCode);
     gl.compileShader(fragmentShaderObject); //udh jadi object (.o)
@@ -35,10 +73,20 @@ function main(){
     gl.linkProgram(shaderProgram);
     gl.useProgram(shaderProgram);
 
+    // Kita mengajarkan GPU bagaimana caranya mengoleksi
+    // nilai posisi dari ARRAY_BUFFER untuk setiap
+    // vertex yang sedang diproses
+
+    var aPosition = gl.getAttribLocation(shaderProgram, 'aPosition');
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(aPosition);
+
     gl.clearColor(0.9, 0.3, 0.0, 0.3);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.drawArrays(gl.POINTS, 0, 1);
+    gl.drawArrays(gl.LINE_LOOP, 0, 18);
 
+    gl.drawArrays(gl.LINE_LOOP, 18, 9);
+    
 }
