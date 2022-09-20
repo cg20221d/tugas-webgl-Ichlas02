@@ -69,13 +69,13 @@ function main(){
 
         //huruf T
 
-        0.15, -0.1,
-        0.65, -0.1,
-        0.15, -0.25,
+        0.1, -0.1,
+        0.7, -0.1,
+        0.1, -0.25,
 
-        0.15, -0.25,
-        0.65, -0.25,
-        0.65, -0.1,
+        0.1, -0.25,
+        0.7, -0.25,
+        0.7, -0.1,
 
         
         0.33, -0.1,
@@ -84,7 +84,43 @@ function main(){
 
         0.33, -0.9,
         0.48, -0.9,
-        0.48, -0.1
+        0.48, -0.1,
+
+        //dekor 9
+        -0.25, 0.9,
+        -0.2, 0.87,
+        -0.1, 0.77,
+        -0.1, 0.17,
+        -0.2, 0.07,
+        -0.5, 0.07,
+        -0.55, 0.1,
+
+        -0.5, 0.35,
+        -0.45, 0.32,
+        -0.45, 0.25,
+
+        -0.3, 0.42,
+        -0.5, 0.42,
+        -0.55, 0.45,
+
+        -0.3, 0.73,
+        -0.45, 0.73,
+        -0.45, 0.59,
+
+        //dekor 1
+        0.48, 0.9,
+        0.53, 0.87,
+        0.53, 0.25,
+
+        0.63, 0.25,
+        0.68, 0.22,
+        0.68, 0.07,
+        0.22, 0.07,
+        0.17, 0.1,
+
+        0.32, 0.67,
+        0.22, 0.67,
+        0.17, 0.7,
 
 
     ];
@@ -111,10 +147,10 @@ function main(){
     var fragmentShaderCode = `
     precision mediump float;
     void main() {
-        float r = 0.5;
+        float r = 0.0;
         float g = 0.5;
         float b = 0.8;
-        gl_FragColor = vec4(r, g, b, 1.0);
+        gl_FragColor = vec4(r, g, b, 0.5);
         
     }    
     `;
@@ -137,7 +173,7 @@ function main(){
     gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(aPosition);
 
-    gl.clearColor(0.9, 0.3, 0.0, 0.3);
+    gl.clearColor(0.2, 0.3, 0.9, 0.7);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -155,4 +191,15 @@ function main(){
     //huruf T
     gl.drawArrays(gl.TRIANGLE_FAN, 51, 6);
     gl.drawArrays(gl.TRIANGLE_FAN, 57, 6);
+
+    //Dekor 9
+    gl.drawArrays(gl.LINE_STRIP, 63, 7);
+    gl.drawArrays(gl.LINE_STRIP, 70, 3);
+    gl.drawArrays(gl.LINE_STRIP, 73, 3);
+    gl.drawArrays(gl.LINE_STRIP, 76, 3);
+
+    //Dekor 
+    gl.drawArrays(gl.LINE_STRIP, 79, 3);
+    gl.drawArrays(gl.LINE_STRIP, 82, 5);
+    gl.drawArrays(gl.LINE_STRIP, 87, 3);
 }
