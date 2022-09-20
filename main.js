@@ -198,7 +198,7 @@ function main(){
     gl.drawArrays(gl.LINE_STRIP, 73, 3);
     gl.drawArrays(gl.LINE_STRIP, 76, 3);
 
-    //Dekor 
+    //Dekor 1
     gl.drawArrays(gl.LINE_STRIP, 79, 3);
     gl.drawArrays(gl.LINE_STRIP, 82, 5);
     gl.drawArrays(gl.LINE_STRIP, 87, 3);
