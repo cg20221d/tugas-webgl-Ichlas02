@@ -39,12 +39,54 @@ function main(){
         0.32, 0.7,
         0.17, 0.7,
         0.17, 0.77,
-        0.33, 0.9
+        0.33, 0.9,
 
         //huruf A
+        -0.3, -0.1,
+        -0.45, -0.1,
+        -0.7, -0.9,
 
+        -0.7, -0.9,
+        -0.55, -0.9,
+        -0.3, -0.1,
+
+        -0.3, -0.1,
+        -0.05, -0.9,
+        -0.2, -0.9,
+
+        -0.2, -0.9,
+        -0.45, -0.1,
+        -0.3, -0.1,
+
+
+        -0.55, -0.6,
+        -0.55, -0.7,
+        -0.25, -0.6,
+
+        -0.25, -0.6,
+        -0.25, -0.7,
+        -0.55, -0.7,
 
         //huruf T
+
+        0.15, -0.1,
+        0.65, -0.1,
+        0.15, -0.25,
+
+        0.15, -0.25,
+        0.65, -0.25,
+        0.65, -0.1,
+
+        
+        0.33, -0.1,
+        0.48, -0.1,
+        0.33, -0.9,
+
+        0.33, -0.9,
+        0.48, -0.9,
+        0.48, -0.1
+
+
     ];
 
     var buffer = gl.createBuffer();
@@ -99,10 +141,18 @@ function main(){
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    //angka 9
     gl.drawArrays(gl.LINE_LOOP, 0, 16);
-
     gl.drawArrays(gl.LINE_LOOP, 16, 5);
 
+    //angka 1
     gl.drawArrays(gl.LINE_LOOP, 21, 12);
     
+    //huruf A
+    gl.drawArrays(gl.TRIANGLE_FAN, 33, 12);
+    gl.drawArrays(gl.TRIANGLE_FAN, 45, 6);
+
+    //huruf T
+    gl.drawArrays(gl.TRIANGLE_FAN, 51, 6);
+    gl.drawArrays(gl.TRIANGLE_FAN, 57, 6);
 }
