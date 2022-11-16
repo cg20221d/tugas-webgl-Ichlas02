@@ -11,4 +11,6 @@
 
 ## Tugas ke-2
 ### Hasil canvas
-<img src="https://s4.gifyu.com/images/2022-11-16-14-16-12.gif" alt="ichlis" style="width:200px;"/>
+link gif = https://s4.gifyu.com/images/2022-11-16-14-16-12.gif
+
+(maaf pak ini gabisa diupload ke readme gifnya gatau kenapa hehe)
