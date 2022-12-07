@@ -386,6 +386,58 @@ const indicesT = [
     44, 45, 46,    44, 46, 47,
 ];
 
+const vertexCube = [
+  //front
+  0.5, 0.5, 0.5,         0, 1, 0.8,     //0, 0, 1,
+  0.5, -0.5, 0.5,         0, 1, 0.8,    // 0, 0, 1,
+  -0.5, -0.5, 0.5,         0, 1, 0.8,    //0, 0, 1,
+  -0.5, 0.5, 0.5,         0, 1, 0.8,    //0, 0, 1,
+
+  //Back
+  0.5, 0.5, -0.5,         0.8, 1, 0.8,   //0, 0, -1,
+  0.5, -0.5, -0.5,         0.8, 1, 0.8,   //0, 0, -1,
+  -0.5, -0.5, -0.5,         0.8, 1, 0.8,  //0, 0, -1,
+  -0.5, 0.5, -0.5,         0.8, 1, 0.8,   //0, 0, -1,
+
+  //left
+  -0.5, 0.5, 0.5,         0, 1, 0.8,      //-1, 0, 0,
+  -0.5, -0.5, 0.5,         0, 1, 0.8,     //-1, 0, 0,
+  -0.5, -0.5, -0.5,         0.8, 1, 0.8,  //-1, 0, 0,
+  -0.5, 0.5, -0.5,         0.8, 1, 0.8,   //-1, 0, 0,
+
+  //right
+  0.5, -0.5, 0.5,         0, 1, 0.8,      //1, 0, 0,
+  0.5, 0.5, 0.5,         0, 1, 0.8,       //1, 0, 0,
+  0.5, 0.5, -0.5,         0.8, 1, 0.8,    //1, 0, 0,
+  0.5, -0.5, -0.5,         0.8, 1, 0.8,   //1, 0, 0,
+
+  //top
+  0.5, 0.5, 0.5,         0, 1, 0.8,       //0, 1, 0,
+  -0.5, 0.5, 0.5,         0, 1, 0.8,      //0, 1, 0,
+  -0.5, 0.5, -0.5,         0.8, 1, 0.8,   //0, 1, 0,
+  0.5, 0.5, -0.5,         0.8, 1, 0.8,    //0, 1, 0,
+  
+  //bottom
+  0.5, -0.5, 0.5,         0, 1, 0.8,      //0, -1, 0,
+  -0.5, -0.5, 0.5,         0, 1, 0.8,     //0, -1, 0,
+  -0.5, -0.5, -0.5,         0.8, 1, 0.8,  //0, -1, 0,
+  0.5, -0.5, -0.5,         0.8, 1, 0.8,   //0, -1, 0,
+];
+
+const indicesCube = [
+  0,  1,  2,     0,  2,  3,
+
+  4,  5,  6,     4,  6,  7,
+
+  8,  9,  10,    8,  10, 11,
+
+  12, 13, 14,    12, 14, 15,
+
+  16, 17, 18,    16, 18, 19,
+
+  20, 21, 22,    20, 22, 23,
+];
+
 const objects = [
     {
       vertices: vertex9,
@@ -417,21 +469,13 @@ const objects = [
         length: indices91.length,
         type: gl.LINE_LOOP,
     },
-  ]
-
-
-// function randomColor() {
-//     return [Math.random(), Math.random(), Math.random()];
-// }
-
-
-// let colorData = [];
-// for (let face = 0; face < 6; face++) {
-//     let faceColor = randomColor();
-//     for (let vertex = 0; vertex < 6; vertex++) {
-//         colorData.push(...faceColor);
-//     }
-// }
+    {
+      vertices: vertexCube,
+      indices: indicesCube,
+      length: indicesCube.length,
+      type: gl.TRIANGLES,
+    },
+  ];
 
 const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
@@ -439,9 +483,11 @@ precision mediump float;
 
 attribute vec3 position;
 attribute vec3 color;
-varying vec3 vColor;
+// attribute vec3 normal;
 
-// uniform mat4 matrix;
+varying vec3 vColor;
+// varying vec3 vNormal;
+
 uniform mat4 mWorld;
 uniform mat4 mView;
 uniform mat4 mProj;
@@ -450,6 +496,7 @@ void main() {
     vColor = color;
     // gl_Position = matrix * vec4(position, 1);
     gl_Position = mProj * mView * mWorld * vec4(position, 1);
+    // vNormal = normal;
 }
 `);
 gl.compileShader(vertexShader);
@@ -459,9 +506,27 @@ gl.shaderSource(fragmentShader, `
 precision mediump float;
 
 varying vec3 vColor;
+uniform vec3 uAmbientConstant;
+uniform float uAmbientIntensity;
+// varying vec3 vNormal;
+// uniform vec3 uLightDirection;
+// uniform mat3 uNormalModel;
 
 void main() {
-    gl_FragColor = vec4(vColor, 1);
+    vec3 ambient = uAmbientConstant * uAmbientIntensity;
+    vec3 phong = ambient;
+    // vec3 ambient = uLightConstant * uAmbientIntensity;
+    // vec3 normalizedLight = normalize(-uLightDirection);
+    // vec3 normalizedNormal = normalize(uNormalModel * vNormal);
+    // float cosTheta = dot(normalizedNormal, normalizedLight);
+    // vec3 diffuse = vec3(0.0, 0.0, 0.0);
+    // if (cosTheta > 0.0) {
+    //     float diffuseIntensity = cosTheta;
+    //     diffuse = uLightConstant * diffuseIntensity;
+    // }
+    // vec3 phong = ambient + diffuse;
+    gl_FragColor = vec4(phong * vColor, 1);
+    // gl_FragColor = vec4(vColor, 1);
 }
 `);
 gl.compileShader(fragmentShader);
@@ -474,6 +539,8 @@ gl.attachShader(program, fragmentShader);
 // varoaible lokal
 var rotateX = 0;
 var rotateY = 0;
+var moveZ = 0;
+var moveX = 0;
 var canvasWidth = 12
 var horizontalSpeed = 0.091;
 var horizontalDelta = 0.0;
@@ -505,116 +572,107 @@ const draw = (vertices, indices, start=0, end, type=gl.LINE_LOOP) =>{
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-  const aPosition = gl.getAttribLocation(program, 'position');
-  const aColor = gl.getAttribLocation(program, 'color');
+  var aPosition = gl.getAttribLocation(program, 'position');
+  var aColor = gl.getAttribLocation(program, 'color');
+  // var aNormal = gl.getAttribLocation(program, 'normal');
 
   gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 
     6 * Float32Array.BYTES_PER_ELEMENT, 
     0 * Float32Array.BYTES_PER_ELEMENT
   );
   gl.enableVertexAttribArray(aPosition);
+
     
     gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 
       6 * Float32Array.BYTES_PER_ELEMENT, 
       3 * Float32Array.BYTES_PER_ELEMENT 
       );
     gl.enableVertexAttribArray(aColor);
+
+    // gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 
+    //   9 * Float32Array.BYTES_PER_ELEMENT, 
+    //   6 * Float32Array.BYTES_PER_ELEMENT);
+    // gl.enableVertexAttribArray(aNormal);
+
+  // Pencahayaan
+  var uAmbientConstant = gl.getUniformLocation(program, 'uAmbientConstant');
+  // var uLightConstant = gl.getUniformLocation(program, 'uLightConstant');
+  var uAmbientIntensity = gl.getUniformLocation(program, 'uAmbientIntensity');
+  gl.uniform3fv(uAmbientConstant, [0.8, 1, 0.8]);
+  // gl.uniform3fv(uLightConstant, [0.8, 1, 0.8]);
+  gl.uniform1f(uAmbientIntensity, 0.391);
+  // var uLightDirection = gl.getUniformLocation(program, "uLightDirection");
+  //   gl.uniform3fv(uLightDirection, [2.0, 0.0, 0.0]);
     
     gl.drawElements(type, indices.length, gl.UNSIGNED_SHORT, 0);
 }
-// const position9Buffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, position9Buffer);
-// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex9), gl.STATIC_DRAW);
-
-// const position1Buffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, position1Buffer);
-// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex1), gl.STATIC_DRAW);
-
-// const positionABuffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, positionABuffer);
-// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexA), gl.STATIC_DRAW);
-
-// const positionTBuffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, positionTBuffer);
-// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexT), gl.STATIC_DRAW);
 
 gl.linkProgram(program);
-
-// const positionLocation = gl.getAttribLocation(program, `position`);
-// gl.enableVertexAttribArray(positionLocation);
-// gl.bindBuffer(gl.ARRAY_BUFFER, position9Buffer);
-// gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
-// const colorLocation = gl.getAttribLocation(program, `color`);
-// gl.enableVertexAttribArray(colorLocation);
-// gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-// gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
-
 gl.useProgram(program);
 gl.enable(gl.DEPTH_TEST);
 
-const animate9 = () =>{
-    var model = glMatrix.mat4.create();
+  const animate9 = () =>{
+      var model = glMatrix.mat4.create();
 
-    if (horizontalDelta >= (canvasWidth/2) || horizontalDelta <= (-canvasWidth/2+1)) {
-      horizontalSpeed = horizontalSpeed * -1;
+      if (horizontalDelta >= (canvasWidth/2) || horizontalDelta <= (-canvasWidth/2+1)) {
+        horizontalSpeed = horizontalSpeed * -1;
+      }
+
+      horizontalDelta += horizontalSpeed;
+
+      glMatrix.mat4.translate(model, model, [horizontalDelta, verticalDelta, 0.0]);
+      
+      var mWorld = gl.getUniformLocation(program, "mWorld");
+      var mView = gl.getUniformLocation(program, "mView");
+      var mProj = gl.getUniformLocation(program, "mProj");
+
+      gl.uniformMatrix4fv(mWorld,false, model);
+      gl.uniformMatrix4fv(mView, false, view);
+      gl.uniformMatrix4fv(mProj, false, perspective);
+
+      draw(objects[0].vertices, objects[0].indices, 0, objects[0].length, objects[0].type);
+      draw(objects[4].vertices, objects[4].indices, 0, objects[4].length, objects[4].type);
     }
-
-    horizontalDelta += horizontalSpeed;
-
-    glMatrix.mat4.translate(model, model, [horizontalDelta, verticalDelta, 0.0]);
-    
-    var mWorld = gl.getUniformLocation(program, "mWorld");
-    var mView = gl.getUniformLocation(program, "mView");
-    var mProj = gl.getUniformLocation(program, "mProj");
-
-    gl.uniformMatrix4fv(mWorld,false, model);
-    gl.uniformMatrix4fv(mView, false, view);
-    gl.uniformMatrix4fv(mProj, false, perspective);
-
-    draw(objects[0].vertices, objects[0].indices, 0, objects[0].length, objects[0].type);
-    draw(objects[4].vertices, objects[4].indices, 0, objects[4].length, objects[4].type);
-  }
   
-  const animate1 = () =>{
-    var model = glMatrix.mat4.create();
+  // const animate1 = () =>{
+  //   var model = glMatrix.mat4.create();
 
-    if (scaleDelta >= 2 || scaleDelta <= -0.5) {
-      scaleSpeed = scaleSpeed * -1;
-    }
+  //   if (scaleDelta >= 2 || scaleDelta <= -0.5) {
+  //     scaleSpeed = scaleSpeed * -1;
+  //   }
 
-    scaleDelta += scaleSpeed;
+  //   scaleDelta += scaleSpeed;
 
-    glMatrix.mat4.translate(model, model, [0, 0, scaleDelta]);
+  //   glMatrix.mat4.translate(model, model, [0, 0, scaleDelta]);
     
-    var mWorld = gl.getUniformLocation(program, "mWorld");
-    var mView = gl.getUniformLocation(program, "mView");
-    var mProj = gl.getUniformLocation(program, "mProj"); 
+  //   var mWorld = gl.getUniformLocation(program, "mWorld");
+  //   var mView = gl.getUniformLocation(program, "mView");
+  //   var mProj = gl.getUniformLocation(program, "mProj"); 
 
-    gl.uniformMatrix4fv(mWorld,false, model);
-    gl.uniformMatrix4fv(mView, false, view);
-    gl.uniformMatrix4fv(mProj, false, perspective);
+  //   gl.uniformMatrix4fv(mWorld,false, model);
+  //   gl.uniformMatrix4fv(mView, false, view);
+  //   gl.uniformMatrix4fv(mProj, false, perspective);
 
-    draw(objects[1].vertices, objects[1].indices, 0, objects[1].length, objects[1].type);
-  }
+  //   draw(objects[1].vertices, objects[1].indices, 0, objects[1].length, objects[1].type);
+  // }
 
-  const animateA = () =>{
-    var model = glMatrix.mat4.create();
+  // const animateA = () =>{
+  //   var model = glMatrix.mat4.create();
 
-    glMatrix.mat4.rotateY(
-      model, model, rotateY
-    );
+  //   glMatrix.mat4.rotateY(
+  //     model, model, rotateY
+  //   );
 
-    var mWorld = gl.getUniformLocation(program, "mWorld");
-    var mView = gl.getUniformLocation(program, "mView");
-    var mProj = gl.getUniformLocation(program, "mProj"); 
+  //   var mWorld = gl.getUniformLocation(program, "mWorld");
+  //   var mView = gl.getUniformLocation(program, "mView");
+  //   var mProj = gl.getUniformLocation(program, "mProj"); 
 
-    gl.uniformMatrix4fv(mWorld,false, model);
-    gl.uniformMatrix4fv(mView, false, view);
-    gl.uniformMatrix4fv(mProj, false, perspective);
+  //   gl.uniformMatrix4fv(mWorld,false, model);
+  //   gl.uniformMatrix4fv(mView, false, view);
+  //   gl.uniformMatrix4fv(mProj, false, perspective);
 
-    draw(objects[2].vertices, objects[2].indices, 0, objects[2].length, objects[2].type);
-  }
+  //   draw(objects[2].vertices, objects[2].indices, 0, objects[2].length, objects[2].type);
+  // }
 
   const animateT = () =>{
     var model = glMatrix.mat4.create();
@@ -633,6 +691,27 @@ const animate9 = () =>{
 
     draw(objects[3].vertices, objects[3].indices, 0, objects[3].length, objects[3].type);
   }
+
+  const animateCube = () =>{
+    var model = glMatrix.mat4.create();
+
+    glMatrix.mat4.translate(model, model, [moveX, 0.0, moveZ]);
+
+    var mWorld = gl.getUniformLocation(program, "mWorld");
+    var mView = gl.getUniformLocation(program, "mView");
+    var mProj = gl.getUniformLocation(program, "mProj");
+
+    gl.uniformMatrix4fv(mWorld,false, model);
+    gl.uniformMatrix4fv(mView, false, view);
+    gl.uniformMatrix4fv(mProj, false, perspective);
+
+    // var uNormalModel = gl.getUniformLocation(program, "uNormalModel");
+    // var normalModel = glMatrix.mat3.create();
+    //     glMatrix.mat3.normalFromMat4(normalModel, model);
+    //     gl.uniformMatrix3fv(uNormalModel, false, normalModel);
+
+    draw(objects[5].vertices, objects[5].indices, 0, objects[5].length, objects[5].type);
+  }
   
   function onKeydown(event) {
     if (event.keyCode == 65 || event.keyCode == 37) { // a / arrow kiri
@@ -646,6 +725,18 @@ const animate9 = () =>{
     } else if (event.keyCode == 83 || event.keyCode == 40) { // s / arrow bawah
       rotateX += 0.2;
     }
+
+    if (event.keyCode == 73) { // i / arrow kiri
+      moveZ -= 0.2;
+    } else if (event.keyCode == 75) { // k / arrow kanan
+      moveZ += 0.2;
+    }
+
+    if (event.keyCode == 74) { // j / arrow kiri
+      moveX -= 0.2;
+    } else if (event.keyCode == 76) { // l / arrow kanan
+      moveX += 0.2;
+    }
   }
   document.addEventListener("keydown", onKeydown);
 
@@ -654,30 +745,10 @@ const animate9 = () =>{
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);  
 
     animate9();
-    animate1();
-    animateA();
+    // animate1();
+    // animateA();
     animateT();
+    animateCube();
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
-
-
-// const uniformLocations = {
-//     matrix: gl.getUniformLocation(program, `matrix`),
-// };
-
-// const matrix = mat4.create();
-
-// // mat4.translate(matrix, matrix, [.2, .5, 0]);
-
-// // mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
-
-// function animate1() {
-//     requestAnimationFrame(animate1);
-//     // mat4.rotateZ(matrix, matrix, Math.PI/2 / 70);
-//     // mat4.rotateY(matrix, matrix, Math.PI/2 / 70);
-//     gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
-//     gl.drawArrays(gl.LINE_LOOP, 0, 21);
-// }
-
-// animate1();
